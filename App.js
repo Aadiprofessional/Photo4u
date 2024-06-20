@@ -6,8 +6,10 @@ import HomeScreen from './screens/Home';
 import LoginScreen from './screens/Login';
 import ForgotPasswordScreen from './screens/ForgotPassword';
 import SignupScreen from './screens/Signup';
-import LeftNavBar from './components/LeftNavBar'; // Import LeftNavBar component
-import { colors } from './styles/colors'; // Adjust import path based on your project structure
+import OTPVerificationScreen from './screens/OTPVerificationScreen'; // Import OTPVerificationScreen
+import SplashScreen from './components/SplashScreen'; // Import SplashScreen component
+import LeftNavBar from './components/LeftNavBar';
+import { colors } from './styles/colors';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -21,34 +23,32 @@ function HomeDrawer() {
 }
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // State to control loading state
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to control login status
 
   useEffect(() => {
-    // Example logic to check if user is logged in
-    // Replace this with your actual authentication logic
-    // For demonstration, set isLoggedIn to true initially
-    setIsLoggedIn(true);
+    // Simulate any initialization or data loading logic
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Simulated loading time (2 seconds)
   }, []);
-
-  // Handle login action
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  // Handle logout action
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={isLoggedIn ? 'Home' : 'Login'} screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login">
-          {props => <LoginScreen {...props} handleLogin={handleLogin} />}
-        </Stack.Screen>
-        <Stack.Screen name="Home" component={HomeDrawer} />
-        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Navigator initialRouteName={isLoading ? 'Splash' : (isLoggedIn ? 'HomeDrawer' : 'Login')} screenOptions={{ headerShown: false }}>
+        {isLoading ? (
+          <Stack.Screen name="Splash" component={SplashScreen} />
+        ) : (
+          <>
+            <Stack.Screen name="Login">
+              {props => <LoginScreen {...props} handleLogin={() => setIsLoggedIn(true)} />}
+            </Stack.Screen>
+            <Stack.Screen name="OTPVerification" component={OTPVerificationScreen} />
+            <Stack.Screen name="HomeDrawer" component={HomeDrawer} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
